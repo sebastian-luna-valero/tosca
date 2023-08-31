@@ -36,13 +36,13 @@ topology_template:
       description: Amount of memory for the VM
       type: scalar-unit.size
     minio_accesskey:
-      default: minio
+      default: changeme
       description: Access key credential for object storage and web access
       type: string
     minio_secretkey:
       constraints:
       - min_length: 8
-      default: minio123
+      default: changeme123
       description: Secret key credential for object storage and web access
       type: string
     minio_dns_console:
@@ -95,9 +95,9 @@ topology_template:
       type: integer
     ports:
       default:
-        port_22:
+        ports:
           protocol: tcp
-          source: 22
+          source: 22,80,443
       description: 'Comma separated list of ports to be Opened in the Cloud site (eg.
         22,80,443,2000:2100).
 
