@@ -61,6 +61,14 @@ topology_template:
       default: RELEASE.2023-07-21T21-12-44Z
       description: Check out https://github.com/minio/minio/tags
       type: string
+    nsupdate_secret_console:
+      default: changeme
+      description: Secret generated when registering minio.test.fedcloud.changeme via https://nsupdate.fedcloud.eu/
+      type: string
+    nsupdate_secret_api:
+      default: changeme
+      description: Secret generated when registering minio-api.test.fedcloud.changeme via https://nsupdate.fedcloud.eu/
+      type: string
     mount_path:
       default: /mnt/disk
       description: Path to mount the extra disk
@@ -140,6 +148,32 @@ topology_template:
             inputs:
               ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDHOoVRg3wd0LBv/zAfpBgqOLzfmTvy2gBqh03jkzw++jefoPPsUrSYsLL1S5B6TpiXlJiXnuxfEb4cbs/Zt0SGwDXOoGwwinr8CzWO7EQqP/lAGsW4L38UGSUxojv5nQzf5TTLppQPrGhiiOP8PiKq+QRozze6xOONnGTnvszeGSPeCr032qFQI2kXlxJuWAhf/O3zh19JQIZc1A7sKq79Ghp4+Fq11FBz+iTVwR0rdSV4qycWZU+PrLsUzbV2xiUzN/Rw3wT8rjYwXBJfPvnd2rqYuPqgYO1k23sGSWn6fjY9FNtFX6QQGwbF+YZDRVZOzC+/k+EfKFjKjeqKyqSVaYMjB3J4yZJHJ1tvqysBSE+pnimgycy2p5CrhdWL1jd8DjKQ8drZZNrKi8m6897JV7vEsIDQ7yn4d5hATCKIkK4MT3wnq+HUfloezyeQkwUwU4FpKJnaUUjkQI/FV97mLEU2qJqZMcj2P6J2YWw9ld+mUweSAs4e8Ml7AgYAff0=
                 sebastian@latitude-5420
+      requirements:
+      - host: simple_node
+      type: tosca.nodes.ec3.Application
+    nsupdate_minio_console:
+      interfaces:
+        Standard:
+          configure:
+            implementation: https://raw.githubusercontent.com/sebastian-luna-valero/tosca/main/artifacts/nsupdate.yml
+            inputs:
+              nsupdate_fqdn:
+                get_input: minio_dns_console
+              nsupdate_secret:
+                get_input: nsupdate_secret_console
+      requirements:
+      - host: simple_node
+      type: tosca.nodes.ec3.Application
+    nsupdate_minio_api:
+      interfaces:
+        Standard:
+          configure:
+            implementation: https://raw.githubusercontent.com/sebastian-luna-valero/tosca/main/artifacts/nsupdate.yml
+            inputs:
+              nsupdate_fqdn:
+                get_input: minio_dns_api
+              nsupdate_secret:
+                get_input: nsupdate_secret_api
       requirements:
       - host: simple_node
       type: tosca.nodes.ec3.Application
