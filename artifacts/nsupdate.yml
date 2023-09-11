@@ -6,4 +6,4 @@
     nsupdate_secret: "{{ nsupdate_secret }}"
   tasks:
   - name: Use curl to configure DNS hostname via https://nsupdate.fedcloud.eu/
-    ansible.builtin.command: curl https://{{ nsupdate_fqdn }}:{{ nsupdate_secret }}@nsupdate.fedcloud.eu/nic/update
+    ansible.builtin.command: curl https://{{ nsupdate_fqdn|quote }}:{{ nsupdate_secret|quote }}@nsupdate.fedcloud.eu/nic/update
