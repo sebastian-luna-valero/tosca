@@ -748,7 +748,7 @@ node_types:
       posix_collection:
         file: ansible.posix
         type: tosca.artifacts.AnsibleGalaxy.collection
-       epel_role:
+      epel_role:
         file: geerlingguy.repo-epel
         type: tosca.artifacts.AnsibleGalaxy.role
       autofs_role:
