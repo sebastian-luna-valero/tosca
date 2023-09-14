@@ -10,8 +10,16 @@
         enabled: yes
 
   tasks:
-    # if this task fails, it is intentional and it means that you are not using
-    # the VMI published here: https://github.com/usegalaxy-eu/vgcn
+    - name: Check whether Pulsar is installed
+      ansible.builtin.stat:
+        path: /opt/pulsar/config/app.yml
+      register: st
+
+    - name: Fail if the file does not exist
+      ansible.builtin.fail:
+        msg: "It is a prerequisite to use the VGCN virtual machine image: https://github.com/usegalaxy-eu/vgcn"
+      when: not st.stat.exists
+
     - name: Configure message queue in Pulsar
       ansible.builtin.lineinfile:
         path: /opt/pulsar/config/app.yml
