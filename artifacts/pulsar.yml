@@ -1,7 +1,6 @@
 ---
 - hosts: localhost
   connection: local
-  become: yes
   handlers:
     - name: Restart Pulsar
       ansible.builtin.service:
