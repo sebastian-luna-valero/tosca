@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  connection: local
+  become: yes
+  handlers:
+    - name: Restart Pulsar
+      ansible.builtin.service:
+        name: pulsar.service
+        state: restarted
+        enabled: yes
+
+  tasks:
+    # if this task fails, it is intentional and it means that you are not using
+    # the VMI published here: https://github.com/usegalaxy-eu/vgcn
+    - name: Configure message queue in Pulsar
+      ansible.builtin.lineinfile:
+        path: /opt/pulsar/config/app.yml
+        regexp: '^message_queue_url:'
+        line: 'message_queue_url: pyamqp://{{ pulsar_user }}:{{ pulsar_password }}@mq.galaxyproject.eu:5671//pulsar/{{ pulsar_user }}?ssl=1'
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart Pulsar
