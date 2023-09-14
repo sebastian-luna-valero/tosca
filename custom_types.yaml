@@ -1003,6 +1003,10 @@ node_types:
           capability: tosca.capabilities.Container
           node: tosca.nodes.Compute
           relationship: tosca.relationships.HostedOn
+      - lrms:
+          capability: tosca.capabilities.indigo.LRMS
+          node: tosca.nodes.indigo.LRMS.FrontEnd
+          relationship: tosca.relationships.HostedOn
     interfaces:
       Standard:
         configure:
