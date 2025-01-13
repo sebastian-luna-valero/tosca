@@ -24,7 +24,7 @@ topology_template:
         - 16
         - 32
         - 64
-      default: 8
+      default: 4
       description: Number of CPUs for the front-end node
       required: true
       type: integer
@@ -102,7 +102,7 @@ topology_template:
         - 16
         - 32
         - 64
-      default: 8
+      default: 4
       description: Number of CPUs for the Worker Nodes
       required: true
       type: integer
