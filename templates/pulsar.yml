@@ -1,0 +1,290 @@
+
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: 'Deployment of Pulsar in front of a virtual HTCondor cluster'
+
+imports:
+- grycap_custom_types: https://raw.githubusercontent.com/grycap/tosca/main/custom_types.yaml
+
+metadata:
+  template_name: Pulsar with HTCondor
+  template_version: "1.0.0"
+  template_author: Miguel Caballer and Sebastian Luna-Valero
+
+topology_template:
+
+  inputs:
+    fe_cpus:
+      constraints:
+      - valid_values:
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+      default: 8
+      description: Number of CPUs for the front-end node
+      required: true
+      type: integer
+    fe_disk_size:
+      constraints:
+      - valid_values:
+        - 0 GiB
+        - 10 GiB
+        - 20 GiB
+        - 50 GiB
+        - 100 GiB
+        - 200 GiB
+        - 500 GiB
+        - 1 TiB
+        - 2 TiB
+      default: 100 GiB
+      description: Size of the disk to be attached to the FE instance (Set 0 if disk is not needed)
+      type: scalar-unit.size
+    fe_mem:
+      constraints:
+      - valid_values:
+        - 2 GiB
+        - 4 GiB
+        - 8 GiB
+        - 16 GiB
+        - 32 GiB
+        - 64 GiB
+        - 128 GiB
+        - 256 GiB
+        - 512 GiB
+      default: 32 GiB
+      description: Amount of Memory for the front-end node
+      required: true
+      type: scalar-unit.size
+    fe_mount_path:
+      default: /home/data
+      description: Path to mount the FE attached disk
+      type: string
+    fe_volume_id:
+      default: ''
+      description: 'Or URL of the disk to be attached to the FE instance (format: ost://<keystone-endpoint-url>/)'
+      type: string
+    htcondor_password:
+      default: changeme
+      description: Store HTCondor credentials
+      required: true
+      type: string
+    htcondor_version:
+      constraints:
+      - valid_values:
+        - '10.0'
+        - 10.x
+        - '23.0'
+        - 23.x
+        - '24.0'
+        - 24.x
+      default: '24.0'
+      description: Version of HTCondor to be installed
+      type: string
+    message_queue_password:
+      default: changeme
+      description: Password for the message queue
+      type: string
+    message_queue_user:
+      default: changeme
+      description: User for the message queue
+      type: string
+    wn_cpus:
+      constraints:
+      - valid_values:
+        - 1
+        - 2
+        - 4
+        - 8
+        - 16
+        - 32
+        - 64
+      default: 8
+      description: Number of CPUs for the Worker Nodes
+      required: true
+      type: integer
+    wn_disk_size:
+      constraints:
+      - valid_values:
+        - 0 GiB
+        - 10 GiB
+        - 20 GiB
+        - 50 GiB
+        - 100 GiB
+        - 200 GiB
+        - 500 GiB
+        - 1 TiB
+        - 2 TiB
+      default: 100 GiB
+      description: Size of the disk to be attached to the WN instances (Set 0 if disk is not needed)
+      type: scalar-unit.size
+    wn_mem:
+      constraints:
+      - valid_values:
+        - 2 GiB
+        - 4 GiB
+        - 8 GiB
+        - 16 GiB
+        - 32 GiB
+        - 64 GiB
+        - 128 GiB
+        - 256 GiB
+        - 512 GiB
+      default: 32 GiB
+      description: Amount of Memory for the Worker Nodes
+      required: true
+      type: scalar-unit.size
+    wn_mount_path:
+      default: /mnt/data
+      description: Path to mount the WN attached disk
+      type: string
+    wn_num:
+      default: 1
+      description: Number of Worker Nodes in the cluster
+      required: true
+      type: integer
+
+  node_templates:
+
+    fe_block_storage:
+      properties:
+        size:
+          get_input: fe_disk_size
+        volume_id:
+          get_input: fe_volume_id
+      type: tosca.nodes.BlockStorage
+
+    lrms_front_end:
+      properties:
+        htcondor_password:
+          get_input: htcondor_password
+        htcondor_version:
+          get_input: htcondor_version
+        wn_ips:
+          get_attribute:
+          - lrms_wn
+          - private_address
+      requirements:
+      - host: lrms_server
+      type: tosca.nodes.indigo.LRMS.FrontEnd.HTCondor
+
+    lrms_server:
+      capabilities:
+        endpoint:
+          properties:
+            dns_name: htcondorserver
+            network_name: PUBLIC
+            ports:
+              htcondor_port:
+                protocol: tcp
+                source: 9618
+        host:
+          properties:
+            mem_size:
+              get_input: fe_mem
+            num_cpus:
+              get_input: fe_cpus
+        os:
+          properties:
+            architecture: x86_64
+            image: ost://eu-1.iaas.open-science-cloud.ec.europa.eu/41a6485e-72d8-4e37-8a8b-5ae90dca443d
+            type: linux
+      properties:
+        instance_name: pulsar_lrms_server
+      requirements:
+      - local_storage:
+          node: fe_block_storage
+          relationship:
+            properties:
+              location:
+                get_input: fe_mount_path
+            type: AttachesTo
+      type: tosca.nodes.indigo.Compute
+
+    lrms_wn:
+      capabilities:
+        host:
+          properties:
+            mem_size:
+              get_input: wn_mem
+            num_cpus:
+              get_input: wn_cpus
+        os:
+          properties:
+            architecture: x86_64
+            image: ost://eu-1.iaas.open-science-cloud.ec.europa.eu/41a6485e-72d8-4e37-8a8b-5ae90dca443d
+            type: linux
+        scalable:
+          properties:
+            count:
+              get_input: wn_num
+      properties:
+        instance_name: pulsar_lrms_wn
+      requirements:
+      - local_storage:
+          node: wn_block_storage
+          relationship:
+            properties:
+              location:
+                get_input: wn_mount_path
+            type: AttachesTo
+      type: tosca.nodes.indigo.Compute
+
+    pulsar_node:
+      properties:
+        mq_password:
+          get_input: message_queue_password
+        mq_user:
+          get_input: message_queue_user
+      requirements:
+      - lrms: lrms_front_end
+      - host: lrms_server
+      type: tosca.nodes.indigo.Pulsar
+
+    wn_block_storage:
+      properties:
+        size:
+          get_input: wn_disk_size
+      type: tosca.nodes.BlockStorage
+
+    wn_node:
+      properties:
+        front_end_ip:
+          get_attribute:
+          - lrms_server
+          - private_address
+          - 0
+        htcondor_password:
+          get_input: htcondor_password
+        htcondor_version:
+          get_input: htcondor_version
+        public_front_end_ip:
+          get_attribute:
+          - lrms_server
+          - public_address
+          - 0
+      requirements:
+      - host: lrms_wn
+      type: tosca.nodes.indigo.LRMS.WorkerNode.HTCondor
+
+  outputs:
+    cluster_creds:
+      value:
+        get_attribute:
+        - lrms_server
+        - endpoint
+        - credential
+        - 0
+    cluster_ip:
+      value:
+        get_attribute:
+        - lrms_server
+        - public_address
+        - 0
+    htcondor_version:
+      value:
+        get_input:
+        - htcondor_version
