@@ -24,7 +24,7 @@ topology_template:
         - 16
         - 32
         - 64
-      default: 4
+      default: 2
       description: Number of CPUs for the front-end node
       required: true
       type: integer
@@ -55,7 +55,7 @@ topology_template:
         - 128 GiB
         - 256 GiB
         - 512 GiB
-      default: 32 GiB
+      default: 8 GiB
       description: Amount of Memory for the front-end node
       required: true
       type: scalar-unit.size
@@ -102,7 +102,7 @@ topology_template:
         - 16
         - 32
         - 64
-      default: 4
+      default: 2
       description: Number of CPUs for the Worker Nodes
       required: true
       type: integer
@@ -133,7 +133,7 @@ topology_template:
         - 128 GiB
         - 256 GiB
         - 512 GiB
-      default: 32 GiB
+      default: 8 GiB
       description: Amount of Memory for the Worker Nodes
       required: true
       type: scalar-unit.size
