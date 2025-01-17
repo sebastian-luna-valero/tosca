@@ -200,7 +200,7 @@ topology_template:
         os:
           properties:
             architecture: x86_64
-            image: ost://api.cloud.psnc.pl/41a6485e-72d8-4e37-8a8b-5ae90dca443d
+            distribution: vgcn-rocky
             type: linux
       properties:
         instance_name: pulsar_lrms_server
@@ -227,7 +227,7 @@ topology_template:
         os:
           properties:
             architecture: x86_64
-            image: ost://api.cloud.psnc.pl/41a6485e-72d8-4e37-8a8b-5ae90dca443d
+            distribution: vgcn-rocky
             type: linux
         scalable:
           properties:
