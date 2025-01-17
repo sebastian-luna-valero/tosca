@@ -14,6 +14,10 @@ metadata:
 topology_template:
 
   inputs:
+    fe_instance_type:
+      type: string
+      description: Flavor name of the front-end node
+      default: 'M1-NVME-4vCPU-16R-50D'
     fe_cpus:
       constraints:
       - valid_values:
@@ -92,6 +96,10 @@ topology_template:
       default: changeme
       description: User for the message queue
       type: string
+    wn_instance_type:
+      type: string
+      description: Flavor name for the WNs
+      default: 'M1-NVME-4vCPU-16R-50D'
     wn_cpus:
       constraints:
       - valid_values:
@@ -187,6 +195,8 @@ topology_template:
               get_input: fe_mem
             num_cpus:
               get_input: fe_cpus
+            instance_type:
+              get_input: fe_instance_type
         os:
           properties:
             architecture: x86_64
@@ -212,6 +222,8 @@ topology_template:
               get_input: wn_mem
             num_cpus:
               get_input: wn_cpus
+            instance_type:
+              get_input: wn_instance_type
         os:
           properties:
             architecture: x86_64
