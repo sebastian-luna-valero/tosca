@@ -28,38 +28,38 @@ topology_template:
         - 16
         - 32
         - 64
-      default: 2
+      default: 4
       description: Number of CPUs for the front-end node
       required: true
       type: integer
     fe_disk_size:
       constraints:
       - valid_values:
-        - 0 GiB
-        - 10 GiB
-        - 20 GiB
-        - 50 GiB
-        - 100 GiB
-        - 200 GiB
-        - 500 GiB
-        - 1 TiB
-        - 2 TiB
-      default: 100 GiB
+        - 0 GB
+        - 10 GB
+        - 20 GB
+        - 50 GB
+        - 100 GB
+        - 200 GB
+        - 500 GB
+        - 1 TB
+        - 2 TB
+      default: 100 GB
       description: Size of the disk to be attached to the FE instance (Set 0 if disk is not needed)
       type: scalar-unit.size
     fe_mem:
       constraints:
       - valid_values:
-        - 2 GiB
-        - 4 GiB
-        - 8 GiB
-        - 16 GiB
-        - 32 GiB
-        - 64 GiB
-        - 128 GiB
-        - 256 GiB
-        - 512 GiB
-      default: 8 GiB
+        - 2 GB
+        - 4 GB
+        - 8 GB
+        - 16 GB
+        - 32 GB
+        - 64 GB
+        - 128 GB
+        - 256 GB
+        - 512 GB
+      default: 16 GB
       description: Amount of Memory for the front-end node
       required: true
       type: scalar-unit.size
@@ -110,38 +110,38 @@ topology_template:
         - 16
         - 32
         - 64
-      default: 2
+      default: 4
       description: Number of CPUs for the Worker Nodes
       required: true
       type: integer
     wn_disk_size:
       constraints:
       - valid_values:
-        - 0 GiB
-        - 10 GiB
-        - 20 GiB
-        - 50 GiB
-        - 100 GiB
-        - 200 GiB
-        - 500 GiB
-        - 1 TiB
-        - 2 TiB
-      default: 100 GiB
+        - 0 GB
+        - 10 GB
+        - 20 GB
+        - 50 GB
+        - 100 GB
+        - 200 GB
+        - 500 GB
+        - 1 TB
+        - 2 TB
+      default: 100 GB
       description: Size of the disk to be attached to the WN instances (Set 0 if disk is not needed)
       type: scalar-unit.size
     wn_mem:
       constraints:
       - valid_values:
-        - 2 GiB
-        - 4 GiB
-        - 8 GiB
-        - 16 GiB
-        - 32 GiB
-        - 64 GiB
-        - 128 GiB
-        - 256 GiB
-        - 512 GiB
-      default: 8 GiB
+        - 2 GB
+        - 4 GB
+        - 8 GB
+        - 16 GB
+        - 32 GB
+        - 64 GB
+        - 128 GB
+        - 256 GB
+        - 512 GB
+      default: 16 GB
       description: Amount of Memory for the Worker Nodes
       required: true
       type: scalar-unit.size
